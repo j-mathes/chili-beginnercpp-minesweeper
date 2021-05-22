@@ -42,6 +42,17 @@ void Minefield::Tile::Draw(Graphics& gfx, const Vei2 screenPosition) const
 	}
 }
 
+void Minefield::Tile::Reveal()
+{
+	assert(state_ == State::kHidden);
+	state_ = State::kRevealed;
+}
+
+bool Minefield::Tile::IsRevealed() const
+{
+	return state_ == State::kRevealed;
+}
+
 Minefield::Minefield(int nMines)
 {
 	assert(nMines > 0 && nMines < width_ * height_);
@@ -58,6 +69,15 @@ Minefield::Minefield(int nMines)
 			spawnPosition = { xDist(rng), yDist(rng) };
 		} while (TileAt_(spawnPosition).HasMine());
 		TileAt_(spawnPosition).SpawnMine();
+	}
+
+	for (int i = 0; i < 140; i++)
+	{
+		const Vei2 gridPosition = { xDist(rng), yDist(rng) };
+		if (!TileAt_(gridPosition).IsRevealed())
+		{
+			TileAt_(gridPosition).Reveal();
+		}
 	}
 }
 

@@ -19,6 +19,8 @@ private:
 		void SpawnMine();
 		bool HasMine() const;
 		void Draw(Graphics& gfx, const Vei2 screenPosition ) const;
+		void Reveal();
+		bool IsRevealed() const;
 	private:
 		State state_{ State::kHidden };
 		bool hasMine_{ false };
