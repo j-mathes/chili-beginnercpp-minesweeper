@@ -23,6 +23,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "Minefield.h"
 
 class Game
 {
@@ -42,5 +43,7 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
+	Minefield field;
+	static constexpr int nMines{ 20 };
 	/********************************/
 };
