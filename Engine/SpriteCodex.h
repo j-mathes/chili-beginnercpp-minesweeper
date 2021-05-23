@@ -25,4 +25,5 @@ public:
 	static void DrawTileFlag(Graphics& gfx, const Vei2& pos);
 	static void DrawTileBomb(Graphics& gfx, const Vei2& pos);
 	static void DrawTileBombRed(Graphics& gfx, const Vei2& pos);
+	static void DrawTileNumber(Graphics& gfx, int n, const Vei2& pos);
 };
