@@ -45,5 +45,7 @@ private:
 	/*  User Variables              */
 	Minefield field;
 	static constexpr int nMines{ 20 };
+	static constexpr int originX{ 100 };
+	static constexpr int originY{ 100 };
 	/********************************/
 };

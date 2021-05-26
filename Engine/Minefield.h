@@ -31,7 +31,7 @@ private:
 	};
 
 public:
-	Minefield(int nMines);
+	Minefield(int nMines, Vei2& origin);
 	void Draw(Graphics& gfx) const;
 	RectI GetRect() const;
 	void OnRevealClick(const Vei2& screenPosition);
@@ -46,5 +46,6 @@ private:
 	static constexpr int height_{ 16 };
 	bool hasClickedOnMine_{ false };
 	Tile field_[ width_ * height_ ];
+	Vei2 origin_;
 };
 
