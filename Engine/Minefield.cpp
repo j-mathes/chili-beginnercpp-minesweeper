@@ -34,6 +34,7 @@ void Minefield::Tile::Draw(Graphics& gfx, const Vei2 screenPosition, bool hasCli
 			}
 			break;
 		case Minefield::Tile::State::kFlagged:
+		case Minefield::Tile::State::kFlaggedCorrect:
 			if (HasMine())
 			{
 				SpriteCodex::DrawTileBomb(gfx, screenPosition);
@@ -65,6 +66,7 @@ void Minefield::Tile::Draw(Graphics& gfx, const Vei2 screenPosition, bool hasCli
 			SpriteCodex::DrawTileButton(gfx, screenPosition);
 			break;
 		case Minefield::Tile::State::kFlagged:
+		case Minefield::Tile::State::kFlaggedCorrect:
 			SpriteCodex::DrawTileButton(gfx, screenPosition);
 			SpriteCodex::DrawTileFlag(gfx, screenPosition);
 			break;
@@ -98,7 +100,14 @@ void Minefield::Tile::ToggleFlag()
 	assert(!IsRevealed());
 	if (state_ == State::kHidden)
 	{
-		state_ = State::kFlagged;
+		if (hasMine_)
+		{
+			state_ = State::kFlaggedCorrect;
+		}
+		else
+		{
+			state_ = State::kFlagged;
+		}
 	}
 	else
 	{
@@ -109,6 +118,11 @@ void Minefield::Tile::ToggleFlag()
 bool Minefield::Tile::IsFlagged() const
 {
 	return state_ == State::kFlagged;
+}
+
+bool Minefield::Tile::IsFlaggedCorrectly() const
+{
+	return state_ == State::kFlaggedCorrect;
 }
 
 void Minefield::Tile::SetNeighborMineCount(int mineCount)
@@ -208,6 +222,37 @@ void Minefield::OnFlagClick(const Vei2& screenPosition)
 			tile.ToggleFlag();
 		}
 	}
+}
+
+int Minefield::CorrectMinesFlagged() const
+{
+	int count = 0;
+	for each (Tile t in field_)
+	{
+		if (t.IsFlaggedCorrectly())
+		{
+			count++;
+		}
+	}
+	return count;
+}
+
+int Minefield::TilesRevealed() const
+{
+	int count = 0;
+	for each (Tile t in field_)
+	{
+		if (t.IsRevealed())
+		{
+			count++;
+		}
+	}
+	return count;
+}
+
+int Minefield::TotalTiles() const
+{
+	return width_ * height_;
 }
 
 Minefield::Tile& Minefield::TileAt_(const Vei2& gridPosition)

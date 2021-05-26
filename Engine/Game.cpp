@@ -39,25 +39,32 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	while (!wnd.mouse.IsEmpty())
+	if (field.CorrectMinesFlagged() < nMines || field.TilesRevealed() < field.TotalTiles() - nMines)
 	{
-		const Mouse::Event e = wnd.mouse.Read();
-		if (e.GetType() == Mouse::Event::Type::LPress)
+		while (!wnd.mouse.IsEmpty())
 		{
-			const Vei2 mousePosition = e.GetPos();
-			if (field.GetRect().Contains(mousePosition))
+			const Mouse::Event e = wnd.mouse.Read();
+			if (e.GetType() == Mouse::Event::Type::LPress)
 			{
-				field.OnRevealClick(wnd.mouse.GetPos());
+				const Vei2 mousePosition = e.GetPos();
+				if (field.GetRect().Contains(mousePosition))
+				{
+					field.OnRevealClick(wnd.mouse.GetPos());
+				}
+			}
+			else if (e.GetType() == Mouse::Event::Type::RPress)
+			{
+				const Vei2 mousePosition = e.GetPos();
+				if (field.GetRect().Contains(mousePosition))
+				{
+					field.OnFlagClick(wnd.mouse.GetPos());
+				}
 			}
 		}
-		else if (e.GetType() == Mouse::Event::Type::RPress)
-		{
-			const Vei2 mousePosition = e.GetPos();
-			if (field.GetRect().Contains(mousePosition))
-			{
-				field.OnFlagClick(wnd.mouse.GetPos());
-			}
-		}
+	}
+	else
+	{
+		hasWon = true;
 	}
 }
 
