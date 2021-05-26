@@ -32,6 +32,7 @@ private:
 
 public:
 	Minefield(int nMines, Vei2& origin);
+	Minefield(int nMines);
 	void Draw(Graphics& gfx) const;
 	RectI GetRect() const;
 	void OnRevealClick(const Vei2& screenPosition);

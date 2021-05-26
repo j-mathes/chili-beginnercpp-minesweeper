@@ -25,7 +25,7 @@ Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd),
-	field(nMines, Vei2{originX, originY})
+	field(nMines)
 {
 }
 

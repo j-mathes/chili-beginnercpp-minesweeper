@@ -121,6 +121,10 @@ Minefield::Minefield(int nMines, Vei2& origin)
 	:
 	origin_{ origin }
 {
+	assert(origin_.x > 0);
+	assert(origin_.y > 0);
+	assert(origin_.x + width_ * SpriteCodex::tileSize < Graphics::ScreenWidth);
+	assert(origin_.y + height_ * SpriteCodex::tileSize < Graphics::ScreenHeight);
 	assert(nMines > 0 && nMines < width_ * height_);
 	std::random_device rd;
 	std::mt19937 rng(rd());
@@ -143,6 +147,18 @@ Minefield::Minefield(int nMines, Vei2& origin)
 			TileAt_(gridPosition).SetNeighborMineCount(CountNeighborMines_(gridPosition));
 		}
 	}
+}
+
+Minefield::Minefield(int nMines)
+	:
+	Minefield(
+		nMines, 
+		Vei2{
+			(Graphics::ScreenWidth / 2) - (width_ * SpriteCodex::tileSize / 2),
+			(Graphics::ScreenHeight / 2) - (height_ * SpriteCodex::tileSize / 2)
+		}
+	)
+{
 }
 
 void Minefield::Draw(Graphics& gfx) const
