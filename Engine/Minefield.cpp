@@ -125,6 +125,11 @@ bool Minefield::Tile::IsFlaggedCorrectly() const
 	return state_ == State::kFlaggedCorrect;
 }
 
+bool Minefield::Tile::HasNoNeighborMines() const
+{
+	return nNeighborMines == 0;
+}
+
 void Minefield::Tile::SetNeighborMineCount(int mineCount)
 {
 	assert(nNeighborMines = -1);
@@ -198,15 +203,7 @@ void Minefield::OnRevealClick(const Vei2& screenPosition)
 	{
 		const Vei2 gridPosition = ScreenToGrid_(screenPosition);
 		assert(gridPosition.x >= 0 && gridPosition.x < width_&& gridPosition.y >= 0 && gridPosition.y < height_);
-		Tile& tile = TileAt_(gridPosition);
-		if (!tile.IsRevealed() && !tile.IsFlagged())
-		{
-			tile.Reveal();
-			if (tile.HasMine())
-			{
-				hasClickedOnMine_ = true;
-			}
-		}
+		RevealTile_(gridPosition);
 	}
 }
 
@@ -253,6 +250,37 @@ int Minefield::TilesRevealed() const
 int Minefield::TotalTiles() const
 {
 	return width_ * height_;
+}
+
+void Minefield::RevealTile_(const Vei2& gridPosition)
+{
+	Tile& tile = TileAt_(gridPosition);
+	if (!tile.IsRevealed() && !tile.IsFlagged())
+	{
+		tile.Reveal();
+		if (tile.HasMine())
+		{
+			hasClickedOnMine_ = true;
+		}
+		else if (tile.HasNoNeighborMines())
+		{
+			const int xStart = std::max(0, gridPosition.x - 1);
+			const int yStart = std::max(0, gridPosition.y - 1);
+			const int xEnd = std::min(width_ - 1, gridPosition.x + 1);
+			const int yEnd = std::min(height_ - 1, gridPosition.y + 1);
+			for (Vei2 gridPosition = { xStart, yStart }; gridPosition.y <= yEnd; gridPosition.y++)
+			{
+				for (gridPosition.x = xStart; gridPosition.x <= xEnd; gridPosition.x++)
+				{
+					Tile& tile = TileAt_(gridPosition);
+					if (!tile.IsRevealed())
+					{
+						RevealTile_(gridPosition);
+					}
+				}
+			}
+		}
+	}
 }
 
 Minefield::Tile& Minefield::TileAt_(const Vei2& gridPosition)

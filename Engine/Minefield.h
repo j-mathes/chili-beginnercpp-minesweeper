@@ -25,6 +25,7 @@ private:
 		void ToggleFlag();
 		bool IsFlagged() const;
 		bool IsFlaggedCorrectly() const;
+		bool HasNoNeighborMines() const;
 		void SetNeighborMineCount(int mineCount);
 	private:
 		State state_{ State::kHidden };
@@ -43,6 +44,7 @@ public:
 	int TilesRevealed() const;
 	int TotalTiles() const;
 private:
+	void RevealTile_(const Vei2& gridPosition);
 	Tile& TileAt_(const Vei2& gridPosition);
 	const Tile& TileAt_(const Vei2& gridPosition) const;
 	Vei2 ScreenToGrid_(const Vei2& screenPosition);
