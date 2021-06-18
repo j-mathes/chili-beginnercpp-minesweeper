@@ -20,12 +20,14 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "SpriteCodex.h"
 
 Game::Game(MainWindow& wnd)
 	:
-	wnd(wnd),
-	gfx(wnd),
-	field(nMines)
+	wnd( wnd ),
+	gfx( wnd ),
+	menu( { gfx.GetRect().GetCenter().x,200 } ),
+	field( gfx.GetRect().GetCenter(),4 )
 {
 }
 
@@ -39,36 +41,57 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (field.CorrectMinesFlagged() < nMines || field.TilesRevealed() < field.TotalTiles() - nMines)
+	while( !wnd.mouse.IsEmpty() )
 	{
-		while (!wnd.mouse.IsEmpty())
+		const auto e = wnd.mouse.Read();
+		if( state == State::Memesweeper )
 		{
-			const Mouse::Event e = wnd.mouse.Read();
-			if (e.GetType() == Mouse::Event::Type::LPress)
+			if( field.GetState() == MemeField::State::Memeing )
 			{
-				const Vei2 mousePosition = e.GetPos();
-				if (field.GetRect().Contains(mousePosition))
+				if( e.GetType() == Mouse::Event::Type::LPress )
 				{
-					field.OnRevealClick(wnd.mouse.GetPos());
+					const Vei2 mousePos = e.GetPos();
+					if( field.GetRect().Contains( mousePos ) )
+					{
+						field.OnRevealClick( mousePos );
+					}
 				}
-			}
-			else if (e.GetType() == Mouse::Event::Type::RPress)
-			{
-				const Vei2 mousePosition = e.GetPos();
-				if (field.GetRect().Contains(mousePosition))
+				else if( e.GetType() == Mouse::Event::Type::RPress )
 				{
-					field.OnFlagClick(wnd.mouse.GetPos());
+					const Vei2 mousePos = e.GetPos();
+					if( field.GetRect().Contains( mousePos ) )
+					{
+						field.OnFlagClick( mousePos );
+					}
 				}
 			}
 		}
-	}
-	else
-	{
-		hasWon = true;
+		else
+		{
+			const SelectionMenu::Size s = menu.ProcessMouse( e );
+			switch( s )
+			{
+			case SelectionMenu::Size::Small:
+			case SelectionMenu::Size::Medium:
+			case SelectionMenu::Size::Large:
+				state = State::Memesweeper;
+			}
+		}
 	}
 }
 
 void Game::ComposeFrame()
 {
-	field.Draw(gfx);
+	if( state == State::Memesweeper )
+	{
+		field.Draw( gfx );
+		if( field.GetState() == MemeField::State::Winrar )
+		{
+			SpriteCodex::DrawWin( gfx.GetRect().GetCenter(),gfx );
+		}
+	}
+	else
+	{
+		menu.Draw( gfx );
+	}
 }

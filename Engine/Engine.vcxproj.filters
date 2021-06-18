@@ -72,6 +72,12 @@
     <ClInclude Include="Vei2.h">
       <Filter>Header Files\Framework</Filter>
     </ClInclude>
+    <ClInclude Include="MemeField.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -109,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="SpriteCodex.cpp">
       <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="MemeField.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

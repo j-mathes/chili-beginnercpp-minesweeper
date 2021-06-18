@@ -23,10 +23,18 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "MemeField.h"
+#include "SelectionMenu.h"
 #include "Minefield.h"
 
 class Game
 {
+private:
+	enum class State
+	{
+		SelectionMenu,
+		Memesweeper
+	};
 public:
 	Game( class MainWindow& wnd );
 	Game( const Game& ) = delete;
@@ -43,6 +51,9 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
+	MemeField field;
+	SelectionMenu menu;
+	State state = State::SelectionMenu;
 	Minefield field;
 	static constexpr int nMines{ 5 };
 	bool hasWon{ false };
