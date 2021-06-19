@@ -24,12 +24,11 @@ void Minefield::Tile::Draw(Graphics& gfx, const Vei2& screenPosition, Minefield:
 		switch (state_)
 		{
 		case Minefield::Tile::State::kHidden:
-				SpriteCodex::DrawTileButton(gfx, screenPosition);
-
+			SpriteCodex::DrawTileButton(gfx, screenPosition);
 			break;
 		case Minefield::Tile::State::kFlagged:
-				SpriteCodex::DrawTileButton(gfx, screenPosition);
-				SpriteCodex::DrawTileFlag(gfx, screenPosition);
+			SpriteCodex::DrawTileButton(gfx, screenPosition);
+			SpriteCodex::DrawTileFlag(gfx, screenPosition);
 			break;
 		case Minefield::Tile::State::kRevealed:
 			if (!HasMine())
@@ -99,7 +98,7 @@ void Minefield::Tile::ToggleFlag()
 	assert(!IsRevealed());
 	if (state_ == State::kHidden)
 	{
-			state_ = State::kFlagged;
+		state_ = State::kFlagged;
 		
 	}
 	else
@@ -120,7 +119,7 @@ bool Minefield::Tile::HasNoNeighborMines() const
 
 void Minefield::Tile::SetNeighborMineCount(int mineCount)
 {
-	assert(nNeighborMines_ = -1);
+	assert(nNeighborMines_ == -1);
 	nNeighborMines_ = mineCount;
 }
 
@@ -232,7 +231,6 @@ void Minefield::RevealTile_(const Vei2& gridPosition)
 		if (tile.HasMine())
 		{
 			state_ = State::kLose;
-
 			sndLose.Play();
 		}
 		else if (tile.HasNoNeighborMines())
@@ -245,9 +243,7 @@ void Minefield::RevealTile_(const Vei2& gridPosition)
 			{
 				for (gridPosition.x = xStart; gridPosition.x <= xEnd; gridPosition.x++)
 				{
-
-						RevealTile_(gridPosition);
-
+					RevealTile_(gridPosition);
 				}
 			}
 		}
