@@ -61,13 +61,13 @@ private:
 			switch( s )
 			{
 			case Size::Small:
-				SpriteCodex::DrawSmall( pos,gfx );
+				SpriteCodex::DrawSmall(gfx, pos);
 				break;
 			case Size::Medium:
-				SpriteCodex::DrawMedium( pos,gfx );
+				SpriteCodex::DrawMedium(gfx, pos);
 				break;
 			case Size::Large:
-				SpriteCodex::DrawLarge( pos,gfx );
+				SpriteCodex::DrawLarge(gfx, pos);
 				break;
 			}
 		}

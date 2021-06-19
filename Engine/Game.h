@@ -23,7 +23,6 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
-#include "MemeField.h"
 #include "SelectionMenu.h"
 #include "Minefield.h"
 
@@ -33,7 +32,7 @@ private:
 	enum class State
 	{
 		SelectionMenu,
-		Memesweeper
+		Minesweeper
 	};
 public:
 	Game( class MainWindow& wnd );
@@ -51,7 +50,6 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	MemeField field;
 	SelectionMenu menu;
 	State state = State::SelectionMenu;
 	Minefield field;

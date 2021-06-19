@@ -27,7 +27,7 @@ Game::Game(MainWindow& wnd)
 	wnd( wnd ),
 	gfx( wnd ),
 	menu( { gfx.GetRect().GetCenter().x,200 } ),
-	field( gfx.GetRect().GetCenter(),4 )
+	field(4)
 {
 }
 
@@ -44,9 +44,9 @@ void Game::UpdateModel()
 	while( !wnd.mouse.IsEmpty() )
 	{
 		const auto e = wnd.mouse.Read();
-		if( state == State::Memesweeper )
+		if( state == State::Minesweeper )
 		{
-			if( field.GetState() == MemeField::State::Memeing )
+			if( field.GetState() == Minefield::State::kPlaying)
 			{
 				if( e.GetType() == Mouse::Event::Type::LPress )
 				{
@@ -74,7 +74,7 @@ void Game::UpdateModel()
 			case SelectionMenu::Size::Small:
 			case SelectionMenu::Size::Medium:
 			case SelectionMenu::Size::Large:
-				state = State::Memesweeper;
+				state = State::Minesweeper;
 			}
 		}
 	}
@@ -82,12 +82,12 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	if( state == State::Memesweeper )
+	if( state == State::Minesweeper )
 	{
 		field.Draw( gfx );
-		if( field.GetState() == MemeField::State::Winrar )
+		if( field.GetState() == Minefield::State::kWin )
 		{
-			SpriteCodex::DrawWin( gfx.GetRect().GetCenter(),gfx );
+			SpriteCodex::DrawWin(gfx, gfx.GetRect().GetCenter());
 		}
 	}
 	else

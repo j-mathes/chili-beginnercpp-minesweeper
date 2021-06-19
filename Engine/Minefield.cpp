@@ -17,14 +17,38 @@ bool Minefield::Tile::HasMine() const
 	return hasMine_;
 }
 
-void Minefield::Tile::Draw(Graphics& gfx, const Vei2 screenPosition, bool hasClickedOnMine) const
+void Minefield::Tile::Draw(Graphics& gfx, const Vei2& screenPosition, Minefield::State fieldState) const
 {
-	if (hasClickedOnMine)
+	if (fieldState != Minefield::State::kLose)
 	{
 		switch (state_)
 		{
 		case Minefield::Tile::State::kHidden:
-			if (HasMine())
+				SpriteCodex::DrawTileButton(gfx, screenPosition);
+
+			break;
+		case Minefield::Tile::State::kFlagged:
+				SpriteCodex::DrawTileButton(gfx, screenPosition);
+				SpriteCodex::DrawTileFlag(gfx, screenPosition);
+			break;
+		case Minefield::Tile::State::kRevealed:
+			if (!HasMine())
+			{
+				SpriteCodex::DrawTileNumber(gfx, nNeighborMines_, screenPosition);
+			}
+			else
+			{
+				SpriteCodex::DrawTileBomb(gfx, screenPosition);
+			}
+			break;
+		}
+	}
+	else
+	{
+		switch (state_)
+		{
+		case Minefield::Tile::State::kHidden:
+			if (!HasMine())
 			{
 				SpriteCodex::DrawTileBomb(gfx, screenPosition);
 			}
@@ -34,8 +58,7 @@ void Minefield::Tile::Draw(Graphics& gfx, const Vei2 screenPosition, bool hasCli
 			}
 			break;
 		case Minefield::Tile::State::kFlagged:
-		case Minefield::Tile::State::kFlaggedCorrect:
-			if (HasMine())
+			if (!HasMine())
 			{
 				SpriteCodex::DrawTileBomb(gfx, screenPosition);
 				SpriteCodex::DrawTileFlag(gfx, screenPosition);
@@ -49,35 +72,11 @@ void Minefield::Tile::Draw(Graphics& gfx, const Vei2 screenPosition, bool hasCli
 		case Minefield::Tile::State::kRevealed:
 			if (!HasMine())
 			{
-				SpriteCodex::DrawTileNumber(gfx, nNeighborMines, screenPosition);
+				SpriteCodex::DrawTileNumber(gfx, nNeighborMines_, screenPosition);
 			}
 			else
 			{
 				SpriteCodex::DrawTileBombRed(gfx, screenPosition);
-			}
-			break;
-		}
-	}
-	else
-	{
-		switch (state_)
-		{
-		case Minefield::Tile::State::kHidden:
-			SpriteCodex::DrawTileButton(gfx, screenPosition);
-			break;
-		case Minefield::Tile::State::kFlagged:
-		case Minefield::Tile::State::kFlaggedCorrect:
-			SpriteCodex::DrawTileButton(gfx, screenPosition);
-			SpriteCodex::DrawTileFlag(gfx, screenPosition);
-			break;
-		case Minefield::Tile::State::kRevealed:
-			if (!HasMine())
-			{
-				SpriteCodex::DrawTileNumber(gfx, nNeighborMines, screenPosition);
-			}
-			else
-			{
-				SpriteCodex::DrawTileBomb(gfx, screenPosition);
 			}
 			break;
 		}
@@ -100,14 +99,8 @@ void Minefield::Tile::ToggleFlag()
 	assert(!IsRevealed());
 	if (state_ == State::kHidden)
 	{
-		if (hasMine_)
-		{
-			state_ = State::kFlaggedCorrect;
-		}
-		else
-		{
 			state_ = State::kFlagged;
-		}
+		
 	}
 	else
 	{
@@ -120,23 +113,18 @@ bool Minefield::Tile::IsFlagged() const
 	return state_ == State::kFlagged;
 }
 
-bool Minefield::Tile::IsFlaggedCorrectly() const
-{
-	return state_ == State::kFlaggedCorrect;
-}
-
 bool Minefield::Tile::HasNoNeighborMines() const
 {
-	return nNeighborMines == 0;
+	return nNeighborMines_ == 0;
 }
 
 void Minefield::Tile::SetNeighborMineCount(int mineCount)
 {
-	assert(nNeighborMines = -1);
-	nNeighborMines = mineCount;
+	assert(nNeighborMines_ = -1);
+	nNeighborMines_ = mineCount;
 }
 
-Minefield::Minefield(int nMines, Vei2& origin)
+Minefield::Minefield(int nMines, const Vei2& origin)
 	:
 	origin_{ origin }
 {
@@ -182,12 +170,13 @@ Minefield::Minefield(int nMines)
 
 void Minefield::Draw(Graphics& gfx) const
 {
+	gfx.DrawRect(GetRect().GetExpanded(borderThickness_),borderColor_);
 	gfx.DrawRect(GetRect(), SpriteCodex::baseColor);
 	for (Vei2 gridPosition = { 0, 0 }; gridPosition.y < height_; gridPosition.y++)
 	{
 		for (gridPosition.x = 0; gridPosition.x < width_; gridPosition.x++)
 		{
-			TileAt_(gridPosition).Draw(gfx, gridPosition * SpriteCodex::tileSize + origin_, hasClickedOnMine_);
+			TileAt_(gridPosition).Draw(gfx, gridPosition * SpriteCodex::tileSize + origin_, state_);
 		}
 	}
 }
@@ -199,17 +188,21 @@ RectI Minefield::GetRect() const
 
 void Minefield::OnRevealClick(const Vei2& screenPosition)
 {
-	if (!hasClickedOnMine_)
+	if(state_ == State::kPlaying)
 	{
 		const Vei2 gridPosition = ScreenToGrid_(screenPosition);
 		assert(gridPosition.x >= 0 && gridPosition.x < width_&& gridPosition.y >= 0 && gridPosition.y < height_);
 		RevealTile_(gridPosition);
+		if (GameIsWon_())
+		{
+			state_ = State::kWin;
+		}
 	}
 }
 
 void Minefield::OnFlagClick(const Vei2& screenPosition)
 {
-	if (!hasClickedOnMine_)
+	if (state_ == State::kPlaying)
 	{
 		const Vei2 gridPosition = ScreenToGrid_(screenPosition);
 		assert(gridPosition.x >= 0 && gridPosition.x < width_&& gridPosition.y >= 0 && gridPosition.y < height_);
@@ -217,39 +210,17 @@ void Minefield::OnFlagClick(const Vei2& screenPosition)
 		if (!tile.IsRevealed())
 		{
 			tile.ToggleFlag();
+			if (tile.IsFlagged() && GameIsWon_())
+			{
+				state_ = State::kWin;
+			}
 		}
 	}
 }
 
-int Minefield::CorrectMinesFlagged() const
+Minefield::State Minefield::GetState() const
 {
-	int count = 0;
-	for each (Tile t in field_)
-	{
-		if (t.IsFlaggedCorrectly())
-		{
-			count++;
-		}
-	}
-	return count;
-}
-
-int Minefield::TilesRevealed() const
-{
-	int count = 0;
-	for each (Tile t in field_)
-	{
-		if (t.IsRevealed())
-		{
-			count++;
-		}
-	}
-	return count;
-}
-
-int Minefield::TotalTiles() const
-{
-	return width_ * height_;
+	return state_;
 }
 
 void Minefield::RevealTile_(const Vei2& gridPosition)
@@ -260,7 +231,9 @@ void Minefield::RevealTile_(const Vei2& gridPosition)
 		tile.Reveal();
 		if (tile.HasMine())
 		{
-			hasClickedOnMine_ = true;
+			state_ = State::kLose;
+
+			sndLose.Play();
 		}
 		else if (tile.HasNoNeighborMines())
 		{
@@ -272,11 +245,9 @@ void Minefield::RevealTile_(const Vei2& gridPosition)
 			{
 				for (gridPosition.x = xStart; gridPosition.x <= xEnd; gridPosition.x++)
 				{
-					Tile& tile = TileAt_(gridPosition);
-					if (!tile.IsRevealed())
-					{
+
 						RevealTile_(gridPosition);
-					}
+
 				}
 			}
 		}
@@ -317,4 +288,17 @@ int Minefield::CountNeighborMines_(const Vei2& gridPosition)
 		}
 	}
 	return count;
+}
+
+bool Minefield::GameIsWon_() const 
+{
+	for (const Tile& t : field_)
+	{
+		if ((t.HasMine() && !t.IsFlagged()) ||
+			(!t.HasMine() && !t.IsRevealed()))
+		{
+			return false;
+		}
+	}
+	return true;
 }

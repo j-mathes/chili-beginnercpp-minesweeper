@@ -1511,44 +1511,8 @@ void SpriteCodex::DrawTileNumber(Graphics& gfx, int n, const Vei2& pos)
 		break;
 	}
 }
-}
 
-void SpriteCodex::DrawTileNumber( const Vei2& pos,int n,Graphics& gfx )
-{
-	assert( n >= 0 && n <= 8 );
-	switch( n )
-	{
-	case 0:
-		DrawTile0( pos,gfx );
-		break;
-	case 1:
-		DrawTile1( pos,gfx );
-		break;
-	case 2:
-		DrawTile2( pos,gfx );
-		break;
-	case 3:
-		DrawTile3( pos,gfx );
-		break;
-	case 4:
-		DrawTile4( pos,gfx );
-		break;
-	case 5:
-		DrawTile5( pos,gfx );
-		break;
-	case 6:
-		DrawTile6( pos,gfx );
-		break;
-	case 7:
-		DrawTile7( pos,gfx );
-		break;
-	case 8:
-		DrawTile8( pos,gfx );
-		break;
-	}
-}
-
-void SpriteCodex::DrawWin( const Vei2& pos,Graphics& gfx )
+void SpriteCodex::DrawWin(Graphics& gfx, const Vei2& pos)
 {
 	// calculate top left corner based on input (center)
 	const int x = pos.x - 254 / 2;
@@ -9172,7 +9136,7 @@ void SpriteCodex::DrawWin( const Vei2& pos,Graphics& gfx )
 	gfx.PutPixel( 170 + x,182 + y,0,0,74 );
 }
 
-void SpriteCodex::DrawSmall( const Vei2& pos,Graphics& gfx )
+void SpriteCodex::DrawSmall(Graphics& gfx, const Vei2& pos)
 {
 	const int x = pos.x - 90;
 	const int y = pos.y - 20;
@@ -11373,7 +11337,7 @@ void SpriteCodex::DrawSmall( const Vei2& pos,Graphics& gfx )
 	gfx.PutPixel( 23 + x,40 + y,25,25,25 );
 }
 
-void SpriteCodex::DrawMedium( const Vei2& pos,Graphics& gfx )
+void SpriteCodex::DrawMedium(Graphics& gfx, const Vei2& pos)
 {
 	const int x = pos.x - 225 / 2;
 	const int y = pos.y - 20;
@@ -14257,7 +14221,7 @@ void SpriteCodex::DrawMedium( const Vei2& pos,Graphics& gfx )
 	gfx.PutPixel( 168 + x,39 + y,42,42,42 );
 }
 
-void SpriteCodex::DrawLarge( const Vei2 & pos,Graphics & gfx )
+void SpriteCodex::DrawLarge(Graphics& gfx, const Vei2& pos)
 {
 	const int x = pos.x - 174 / 2;
 	const int y = pos.y - 20;
