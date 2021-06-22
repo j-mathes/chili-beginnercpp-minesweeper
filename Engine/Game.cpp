@@ -65,6 +65,15 @@ void Game::UpdateModel()
 					}
 				}
 			}
+			else if (pField->GetState() != Minefield::State::kPlaying)
+			{
+				if (e.GetType() == Mouse::Event::Type::LPress || e.GetType() == Mouse::Event::Type::RPress)
+				{
+					delete pField;
+					pField = nullptr;
+					state = State::SelectionMenu;
+				}
+			}
 		}
 		else
 		{
