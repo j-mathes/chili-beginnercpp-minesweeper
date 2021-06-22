@@ -45,6 +45,7 @@ private:
 	/********************************/
 	/*  User Functions              */
 	void CreateField(int width, int height, int nMines);
+	void DestroyField();
 	/********************************/
 private:
 	MainWindow& wnd;

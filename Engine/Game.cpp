@@ -69,8 +69,7 @@ void Game::UpdateModel()
 			{
 				if (e.GetType() == Mouse::Event::Type::LPress || e.GetType() == Mouse::Event::Type::RPress)
 				{
-					delete pField;
-					pField = nullptr;
+					DestroyField();
 					state = State::SelectionMenu;
 				}
 			}
@@ -101,6 +100,12 @@ void Game::CreateField(int nMines, int width, int height)
 {
 	assert(pField == nullptr);
 	pField = new Minefield(nMines, width, height);
+}
+
+void Game::DestroyField()
+{
+	delete pField;
+	pField = nullptr;
 }
 
 void Game::ComposeFrame()
