@@ -31,6 +31,11 @@ Game::Game(MainWindow& wnd)
 {
 }
 
+Game::~Game()
+{
+	DestroyField();
+}
+
 void Game::Go()
 {
 	gfx.BeginFrame();	
