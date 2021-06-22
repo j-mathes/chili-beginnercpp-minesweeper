@@ -44,6 +44,7 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
+	void CreateField(int width, int height, int nMines);
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -52,7 +53,7 @@ private:
 	/*  User Variables              */
 	SelectionMenu menu;
 	State state = State::SelectionMenu;
-	Minefield field;
+	Minefield* pField{ nullptr };
 	static constexpr int nMines{ 5 };
 	bool hasWon{ false };
 	/********************************/

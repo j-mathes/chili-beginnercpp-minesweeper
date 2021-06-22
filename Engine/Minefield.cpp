@@ -47,7 +47,7 @@ void Minefield::Tile::Draw(Graphics& gfx, const Vei2& screenPosition, Minefield:
 		switch (state_)
 		{
 		case Minefield::Tile::State::kHidden:
-			if (!HasMine())
+			if (HasMine())
 			{
 				SpriteCodex::DrawTileBomb(gfx, screenPosition);
 			}
@@ -57,7 +57,7 @@ void Minefield::Tile::Draw(Graphics& gfx, const Vei2& screenPosition, Minefield:
 			}
 			break;
 		case Minefield::Tile::State::kFlagged:
-			if (!HasMine())
+			if (HasMine())
 			{
 				SpriteCodex::DrawTileBomb(gfx, screenPosition);
 				SpriteCodex::DrawTileFlag(gfx, screenPosition);
@@ -127,7 +127,8 @@ Minefield::Minefield(int nMines, const Vei2& origin, const int width, const int 
 	:
 	origin_{ origin },
 	width_{width},
-	height_{height}
+	height_{height},
+	field_{new Tile[width_ * height_]}
 {
 	assert(origin_.x > 0);
 	assert(origin_.y > 0);
@@ -138,8 +139,7 @@ Minefield::Minefield(int nMines, const Vei2& origin, const int width, const int 
 	std::mt19937 rng(rd());
 	std::uniform_int_distribution<int> xDist(0, width_ - 1);
 	std::uniform_int_distribution<int> yDist(0, height_ - 1);
-	field_ = new Tile[width * height];
-	
+
 	for (int nSpawned = 0; nSpawned < nMines ; nSpawned++)
 	{
 		Vei2 spawnPosition;
@@ -295,8 +295,9 @@ bool Minefield::GameIsWon_() const
 {
 	for (int i = 0; i < (width_ * height_); i++)
 	{
-		if ((field_[i].HasMine() && !field_[i].IsFlagged()) ||
-			(!field_[i].HasMine() && !field_[i].IsRevealed()))
+		const Tile& t = field_[i];
+		if ((t.HasMine() && !t.IsFlagged()) ||
+			(!t.HasMine() && !t.IsRevealed()))
 		{
 			return false;
 		}

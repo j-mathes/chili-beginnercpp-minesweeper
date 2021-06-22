@@ -21,13 +21,13 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "SpriteCodex.h"
+#include <assert.h>
 
 Game::Game(MainWindow& wnd)
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	menu( { gfx.GetRect().GetCenter().x,200 } ),
-	field(nMines, 10, 10)
+	menu( { gfx.GetRect().GetCenter().x,200 } )
 {
 }
 
@@ -46,22 +46,22 @@ void Game::UpdateModel()
 		const auto e = wnd.mouse.Read();
 		if( state == State::Minesweeper )
 		{
-			if( field.GetState() == Minefield::State::kPlaying)
+			if( pField->GetState() == Minefield::State::kPlaying)
 			{
 				if( e.GetType() == Mouse::Event::Type::LPress )
 				{
 					const Vei2 mousePos = e.GetPos();
-					if( field.GetRect().Contains( mousePos ) )
+					if( pField->GetRect().Contains( mousePos ) )
 					{
-						field.OnRevealClick( mousePos );
+						pField->OnRevealClick( mousePos );
 					}
 				}
 				else if( e.GetType() == Mouse::Event::Type::RPress )
 				{
 					const Vei2 mousePos = e.GetPos();
-					if( field.GetRect().Contains( mousePos ) )
+					if( pField->GetRect().Contains( mousePos ) )
 					{
-						field.OnFlagClick( mousePos );
+						pField->OnFlagClick( mousePos );
 					}
 				}
 			}
@@ -72,20 +72,34 @@ void Game::UpdateModel()
 			switch( s )
 			{
 			case SelectionMenu::Size::Small:
-			case SelectionMenu::Size::Medium:
-			case SelectionMenu::Size::Large:
+				CreateField(15, 10, 10);
 				state = State::Minesweeper;
+				break;
+			case SelectionMenu::Size::Medium:
+				CreateField(30, 15, 15);
+				state = State::Minesweeper;
+				break;
+			case SelectionMenu::Size::Large:
+				CreateField(45, 20, 20);
+				state = State::Minesweeper;
+				break;
 			}
 		}
 	}
+}
+
+void Game::CreateField(int nMines, int width, int height)
+{
+	assert(pField == nullptr);
+	pField = new Minefield(nMines, width, height);
 }
 
 void Game::ComposeFrame()
 {
 	if( state == State::Minesweeper )
 	{
-		field.Draw( gfx );
-		if( field.GetState() == Minefield::State::kWin )
+		pField->Draw( gfx );
+		if( pField->GetState() == Minefield::State::kWin )
 		{
 			SpriteCodex::DrawWin(gfx, gfx.GetRect().GetCenter());
 		}

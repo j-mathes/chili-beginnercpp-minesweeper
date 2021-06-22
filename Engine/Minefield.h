@@ -61,7 +61,7 @@ private:
 	static constexpr int borderThickness_{10};
 	static constexpr Color borderColor_{ Colors::Blue };
 	Sound sndLose{ Sound(L"spayed.wav") };
-	Tile* field_;
+	Tile* field_{nullptr};
 	Vei2 origin_;
 	State state_{ State::kPlaying };
 };
