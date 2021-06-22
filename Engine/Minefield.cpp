@@ -172,6 +172,11 @@ Minefield::Minefield(int nMines, int width, int height)
 {
 }
 
+Minefield::~Minefield()
+{
+	delete field_;
+}
+
 void Minefield::Draw(Graphics& gfx) const
 {
 	gfx.DrawRect(GetRect().GetExpanded(borderThickness_),borderColor_);

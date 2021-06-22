@@ -20,7 +20,6 @@ private:
 		{
 			kHidden,
 			kFlagged,
-			kFlaggedCorrect,
 			kRevealed,
 		};
 
@@ -43,6 +42,7 @@ private:
 public:
 	Minefield(int nMines, const Vei2& origin, int width, int height);
 	Minefield(int nMines, int width, int height);
+	~Minefield();
 	void Draw(Graphics& gfx) const;
 	RectI GetRect() const;
 	void OnRevealClick(const Vei2& screenPosition);
