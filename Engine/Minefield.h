@@ -41,8 +41,8 @@ private:
 	};
 
 public:
-	Minefield(int nMines, const Vei2& origin);
-	Minefield(int nMines);
+	Minefield(int nMines, const Vei2& origin, int width, int height);
+	Minefield(int nMines, int width, int height);
 	void Draw(Graphics& gfx) const;
 	RectI GetRect() const;
 	void OnRevealClick(const Vei2& screenPosition);
@@ -56,12 +56,12 @@ private:
 	int CountNeighborMines_(const Vei2& gridPosition);
 	bool GameIsWon_() const;
 private:
-	static constexpr int width_{ 10 };
-	static constexpr int height_{ 10 };
+	int width_;
+	int height_;
 	static constexpr int borderThickness_{10};
 	static constexpr Color borderColor_{ Colors::Blue };
 	Sound sndLose{ Sound(L"spayed.wav") };
-	Tile field_[ width_ * height_ ];
+	Tile* field_;
 	Vei2 origin_;
 	State state_{ State::kPlaying };
 };

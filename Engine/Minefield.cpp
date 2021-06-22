@@ -123,9 +123,11 @@ void Minefield::Tile::SetNeighborMineCount(int mineCount)
 	nNeighborMines_ = mineCount;
 }
 
-Minefield::Minefield(int nMines, const Vei2& origin)
+Minefield::Minefield(int nMines, const Vei2& origin, const int width, const int height)
 	:
-	origin_{ origin }
+	origin_{ origin },
+	width_{width},
+	height_{height}
 {
 	assert(origin_.x > 0);
 	assert(origin_.y > 0);
@@ -136,6 +138,7 @@ Minefield::Minefield(int nMines, const Vei2& origin)
 	std::mt19937 rng(rd());
 	std::uniform_int_distribution<int> xDist(0, width_ - 1);
 	std::uniform_int_distribution<int> yDist(0, height_ - 1);
+	field_ = new Tile[width * height];
 	
 	for (int nSpawned = 0; nSpawned < nMines ; nSpawned++)
 	{
@@ -155,14 +158,16 @@ Minefield::Minefield(int nMines, const Vei2& origin)
 	}
 }
 
-Minefield::Minefield(int nMines)
+Minefield::Minefield(int nMines, int width, int height)
 	:
 	Minefield(
 		nMines, 
 		Vei2{
-			(Graphics::ScreenWidth / 2) - (width_ * SpriteCodex::tileSize / 2),
-			(Graphics::ScreenHeight / 2) - (height_ * SpriteCodex::tileSize / 2)
-		}
+			(Graphics::ScreenWidth / 2) - (width * SpriteCodex::tileSize / 2),
+			(Graphics::ScreenHeight / 2) - (height * SpriteCodex::tileSize / 2)
+		},
+		width,
+		height
 	)
 {
 }
@@ -288,10 +293,10 @@ int Minefield::CountNeighborMines_(const Vei2& gridPosition)
 
 bool Minefield::GameIsWon_() const 
 {
-	for (const Tile& t : field_)
+	for (int i = 0; i < (width_ * height_); i++)
 	{
-		if ((t.HasMine() && !t.IsFlagged()) ||
-			(!t.HasMine() && !t.IsRevealed()))
+		if ((field_[i].HasMine() && !field_[i].IsFlagged()) ||
+			(!field_[i].HasMine() && !field_[i].IsRevealed()))
 		{
 			return false;
 		}
